@@ -112,7 +112,7 @@ body{margin:0;padding:0;overflow:hidden;font-family:'Cinzel',serif;background:#0
 
 <!-- SLIDE 3 — STUDENT -->
 <div class="section">
- <img class="bg-vedio" src="studentbg.jpg">
+  <video class="bg-video" autoplay muted loop playsinline><source src="video3.mp4"></video>
   <div class="overlay"></div>
   <div class="slide-content">
     <div class="slide-title">STUDENT</div>
@@ -151,7 +151,7 @@ let current  = 0, isScrolling = false;
 function showSection(i) {
   sections.forEach((s, idx) => {
     s.classList.toggle("active", idx === i);
-    s.style.transform = translateY(${(idx - i) * 100}vh);
+    s.style.transform = `translateY(${(idx - i) * 100}vh)`;
   });
   dots.forEach((d, idx) => d.classList.toggle("active", idx === i));
 }
@@ -597,7 +597,7 @@ Speak naturally. Keep responses concise unless depth is needed. You are specific
   function speakText(text) {
     if (!ttsEnabled || !window.speechSynthesis) return;
     window.speechSynthesis.cancel();
-    const clean = text.replace(/\\(.?)\\/g,"$1").replace(/\(.?)\/g,"$1").replace(/(.*?)/g,"$1").replace(/#{1,6}\s/g,"").trim();
+    const clean = text.replace(/\*\*(.*?)\*\*/g,"$1").replace(/\*(.*?)\*/g,"$1").replace(/`(.*?)`/g,"$1").replace(/#{1,6}\s/g,"").trim();
     const utter = new SpeechSynthesisUtterance(clean);
     const voices = window.speechSynthesis.getVoices();
     const preferred = ["Microsoft Zira","Google UK English Female","Google US English","Samantha","Karen","Moira","Victoria"];
@@ -687,9 +687,9 @@ Speak naturally. Keep responses concise unless depth is needed. You are specific
 
     const content = document.createElement("div");
     content.innerHTML = text
-      .replace(/\\(.?)\\*/g,"<strong>$1</strong>")
-      .replace(/\(.?)\*/g,"<em>$1</em>")
-      .replace(/(.*?)/g,'<code style="background:rgba(212,168,83,0.12);padding:1px 5px;border-radius:4px;font-size:11px">$1</code>')
+      .replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>")
+      .replace(/\*(.*?)\*/g,"<em>$1</em>")
+      .replace(/`(.*?)`/g,'<code style="background:rgba(212,168,83,0.12);padding:1px 5px;border-radius:4px;font-size:11px">$1</code>')
       .replace(/\n/g,"<br>");
     bubble.appendChild(content);
 
