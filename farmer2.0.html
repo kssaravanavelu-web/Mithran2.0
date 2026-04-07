@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mithran — FARMER PORTAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ae4927;
+            --primary-light: #d4603a;
+            --bg: #0d1a0c;
+            --card-bg: rgba(255,255,255,0.04);
+            --border: rgba(255,255,255,0.08);
+            --text: #f0f0f0;
+            --muted: #888;
+            --accent: #c8a96e;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            background-image: radial-gradient(ellipse 70% 50% at 15% 20%,rgba(174,73,39,0.12) 0%,transparent 60%),
+                              radial-gradient(ellipse 50% 40% at 85% 80%,rgba(200,169,110,0.07) 0%,transparent 60%);
+        }
+        .navbar { display: flex; align-items: center; padding: 0 30px; height: 64px; position: sticky; top: 0; z-index: 100; background: rgba(13,26,12,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+        .nav-brand { font-family: 'Cinzel', serif; font-size: 18px; letter-spacing: 4px; color: white; text-decoration: none; }
+        .nav-brand span { color: var(--accent); }
+        .portal-tag { margin-left: 16px; font-size: 10px; letter-spacing: 2px; padding: 4px 12px; background: rgba(174,73,39,0.2); color: #e88060; border: 1px solid rgba(174,73,39,0.35); border-radius: 20px; text-transform: uppercase; }
+        
+        .hero { padding: 40px 30px 20px; max-width: 900px; margin: 0 auto; text-align: center; }
+        .hero h1 { font-family: 'Cinzel', serif; font-size: clamp(28px, 4vw, 48px); letter-spacing: 4px; color: white; margin-bottom: 10px; }
+        
+        .filter-card { max-width: 900px; margin: 0 auto 20px; padding: 30px; border-radius: 20px; background: var(--card-bg); border: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+        .filter-group label { display: block; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; font-weight: 600; }
+        .filter-group select, .filter-group input { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: rgba(0,0,0,0.35); color: white; font-size: 14px; outline: none; }
+
+        .results-info { max-width: 900px; margin: 0 auto 15px; padding: 0 30px; font-size: 14px; color: var(--muted); }
+        .results-info span { color: var(--accent); font-weight: bold; font-size: 18px; }
+
+        .results-area { max-width: 900px; margin: 0 auto; padding: 0 30px 80px; }
+        .scheme-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: 16px; padding: 30px; margin-bottom: 24px; animation: cardIn 0.4s ease both; }
+        @keyframes cardIn { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: translateY(0) } }
+        
+        .card-line { margin-bottom: 12px; line-height: 1.6; font-size: 14px; }
+        .card-label { color: var(--accent); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-right: 8px; }
+        .scheme-title { font-family: 'Cinzel', serif; font-size: 22px; color: #e8b090; margin-bottom: 18px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        
+        .btn-official { display: inline-block; margin-top: 15px; padding: 10px 24px; background: var(--primary); color: white; text-decoration: none; border-radius: 8px; font-size: 12px; font-weight: 600; transition: 0.2s; }
+        .btn-official:hover { background: var(--primary-light); }
+        
+        .loader { display: flex; justify-content: center; padding: 60px; gap: 8px; }
+        .loader span { width: 10px; height: 10px; border-radius: 50%; background: var(--primary); animation: bounce 1.2s infinite; }
+        @keyframes bounce { 0%,60%,100% { transform: translateY(0); opacity: 0.5 } 30% { transform: translateY(-12px); opacity: 1 } }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html" class="nav-brand">M<span>ITHRAN</span></a>
+    <span class="portal-tag">🌾 Farmer Portal</span>
+</nav>
+
+<div class="hero">
+    <h1>FARMER PORTAL</h1>
+    <p>Personalized eligibility checks for agricultural support</p>
+</div>
+
+<div class="filter-card">
+    <div class="filter-grid">
+        <div class="filter-group">
+            <label>I Need</label>
+            <select id="type" onchange="performSearch()">
+                <option value="schemes">Government Schemes</option>
+                <option value="loan">Agriculture Loans</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Land (Acres)</label>
+            <input type="number" id="land" placeholder="Acres" step="0.1" oninput="performSearch()">
+        </div>
+        <div class="filter-group">
+            <label>Community</label>
+            <select id="caste" onchange="performSearch()">
+                <option value="">All</option>
+                <option value="BC">BC</option>
+                <option value="MBC">MBC</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
+                <option value="OC">OC</option>
+                <option value="Minority">Minority</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Gender</label>
+            <select id="gender" onchange="performSearch()">
+                <option value="">All</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Transgender">Transgender</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="results-info">
+    Displaying <span id="scheme-count">0</span> matching options
+</div>
+
+<div class="results-area">
+    <div id="results"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+    const sb = window.supabase.createClient('https://zzgnllfalopyjibndbui.supabase.co', 'sb_publishable_XLjmJXavBRRkjv6HpBz7Cg_z7BIS29m');
+
+    async function performSearch() {
+        const type = document.getElementById('type').value;
+        const casteInput = document.getElementById('caste').value;
+        const landInput = document.getElementById('land').value;
+        const genderInput = document.getElementById('gender').value;
+        const resDiv = document.getElementById('results');
+        const countSpan = document.getElementById('scheme-count');
+        
+        resDiv.innerHTML = '<div class="loader"><span></span><span></span><span></span></div>';
+
+        const { data, error } = await sb.from(type).select('*');
+        if (error) { resDiv.innerHTML = "Error fetching data."; return; }
+
+        let filtered = data || [];
+
+        if (casteInput) {
+            filtered = filtered.filter(i => {
+                const dbCaste = (i.caste || '').toLowerCase();
+                return dbCaste.includes(casteInput.toLowerCase()) || dbCaste === 'all';
+            });
+        }
+
+        if (landInput) {
+            filtered = filtered.filter(i => (parseFloat(i.min_land) || 0) <= parseFloat(landInput));
+        }
+
+        if (genderInput) {
+            const selectedGender = genderInput.toLowerCase().trim();
+            filtered = filtered.filter(i => {
+                const dbGender = (i.gender || 'all').toLowerCase().trim();
+                return dbGender === 'all' || dbGender === 'both' || dbGender.includes(selectedGender);
+            });
+        }
+
+        countSpan.textContent = filtered.length;
+        resDiv.innerHTML = '';
+
+        if (filtered.length === 0) {
+            resDiv.innerHTML = '<p style="text-align:center; color:var(--muted); padding:40px;">No matching schemes found.</p>';
+            return;
+        }
+
+        filtered.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'scheme-card';
+            
+            // Format Gender & Community based on user selection
+            const finalGender = genderInput ? genderInput : (item.gender || 'All');
+            const finalCaste = casteInput ? casteInput : (item.caste || 'All');
+
+            // Format Income Limit display
+            const income = item.income_limit;
+            const displayIncome = (income == null || income == 0 || income == "") 
+                                  ? "No Income Limit Required" 
+                                  : "₹" + income;
+
+            card.innerHTML = `
+                <div class="scheme-title">${item.scheme_name || item.loan_name || 'Scheme'}</div>
+                
+                <div class="card-line"><span class="card-label">Minimum Land:</span> ${item.min_land || '0'} Acres</div>
+                
+                <div class="card-line"><span class="card-label">Community:</span> ${finalCaste}</div>
+                
+                <div class="card-line"><span class="card-label">Eligible Gender:</span> ${finalGender}</div>
+                
+                <div class="card-line"><span class="card-label">Income Limit:</span> ${displayIncome}</div>
+                
+                <div class="card-line">
+                    <span class="card-label">Documents Required:</span><br>
+                    <span style="color: #bbb;">${item.documents || 'Aadhar Card, Land Records, Bank Passbook, Community Certificate.'}</span>
+                </div>
+                
+                <div class="card-line">
+                    <span class="card-label">Description:</span><br>
+                    <span style="color: var(--muted);">${item.description || 'No description provided.'}</span>
+                </div>
+
+                ${item.official_link ? `<a href="${item.official_link}" class="btn-official" target="_blank">View Official Webpage →</a>` : ''}
+            `;
+            resDiv.appendChild(card);
+        });
+    }
+
+    window.onload = performSearch;
+</script>
+</body>
+</html>
